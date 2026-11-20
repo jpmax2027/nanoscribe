@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="NanoScribe — an offline-first AI writing and translation assistant powered by Firebase AI Logic hybrid inference: on-device Gemini Nano first, cloud Gemini when needed."
+    />
+    <title>NanoScribe — Offline-First AI Writing Assistant (Firebase AI Logic Hybrid)</title>
+    <script type="module" crossorigin src="/nanoscribe/assets/index-BNPt-QPt.js"></script>
+    <link rel="stylesheet" crossorigin href="/nanoscribe/assets/index-vI58cw9i.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <div class="logo" aria-hidden="true">✒️</div>
+        <div>
+          <h1>NanoScribe</h1>
+          <p class="tagline">
+            Offline-first AI writing &amp; translation — on-device Gemini Nano first,
+            cloud Gemini only when needed.
+          </p>
+        </div>
+      </div>
+      <div class="status-pills" aria-label="Environment status">
+        <span id="pill-config" class="pill pill-neutral">Engine: …</span>
+        <span id="pill-device" class="pill pill-neutral">On-device: checking…</span>
+        <span id="pill-net" class="pill pill-neutral">Network: …</span>
+      </div>
+    </header>
+
+    <div id="demo-banner" class="demo-banner" hidden>
+      <strong>Demo mode.</strong> No Firebase project is configured yet, so answers come
+      from a small built-in demo engine — <em>not</em> an AI model — and nothing leaves
+      this browser. Paste a real config into <code>src/firebase-config.ts</code> to switch
+      to live hybrid inference (see README.md).
+    </div>
+
+    <main class="layout">
+      <section class="card" aria-labelledby="input-heading">
+        <h2 id="input-heading">Your text</h2>
+
+        <div class="task-tabs" role="tablist" aria-label="Choose a task">
+          <button class="task-tab is-active" data-task="summarize" role="tab" aria-selected="true">Summarize</button>
+          <button class="task-tab" data-task="rewrite" role="tab" aria-selected="false">Rewrite</button>
+          <button class="task-tab" data-task="translate" role="tab" aria-selected="false">Translate</button>
+        </div>
+
+        <label class="visually-hidden" for="input-text">Text to process</label>
+        <textarea
+          id="input-text"
+          rows="10"
+          placeholder="Paste or type text here — a meeting note, a paragraph, an email draft…"
+        ></textarea>
+        <div class="input-meta">
+          <span id="char-count">0 characters</span>
+          <span class="sample-buttons">
+            <button type="button" class="ghost-btn sample-btn" data-sample="en">Try a sample (EN)</button>
+            <button type="button" class="ghost-btn sample-btn" data-sample="id">Coba contoh (ID)</button>
+          </span>
+        </div>
+
+        <div id="rewrite-options" class="option-row" hidden>
+          <label for="rewrite-style">Rewrite style</label>
+          <select id="rewrite-style">
+            <option value="formal">Formal / professional</option>
+            <option value="casual">Casual / friendly</option>
+            <option value="concise">More concise</option>
+            <option value="grammar">Fix grammar only</option>
+          </select>
+        </div>
+
+        <div id="translate-options" class="option-row" hidden>
+          <label for="translate-direction">Direction</label>
+          <select id="translate-direction">
+            <option value="en-id">English → Bahasa Indonesia</option>
+            <option value="id-en">Bahasa Indonesia → English</option>
+          </select>
+        </div>
+
+        <div class="option-row">
+          <label for="routing-mode">Inference routing</label>
+          <select id="routing-mode">
+            <option value="hybrid">Hybrid — on-device first, cloud fallback (recommended)</option>
+            <option value="device">On-device only — never leaves this device</option>
+            <option value="cloud">Cloud only — always Gemini in the cloud</option>
+          </select>
+        </div>
+
+        <div class="actions">
+          <button id="run-btn" class="primary-btn" type="button">Run</button>
+          <button id="prepare-btn" class="secondary-btn" type="button">Prepare on-device model</button>
+        </div>
+        <progress id="download-progress" max="1" value="0" hidden></progress>
+        <p id="prepare-note" class="note"></p>
+      </section>
+
+      <section class="card" aria-labelledby="output-heading">
+        <div class="output-header">
+          <h2 id="output-heading">Result</h2>
+          <button id="copy-btn" class="ghost-btn" type="button" disabled>Copy</button>
+        </div>
+
+        <div class="badge-row">
+          <span id="result-badge" class="badge badge-idle">READY</span>
+          <span id="result-meta" class="result-meta">Pick a task and press Run.</span>
+        </div>
+        <p id="result-blurb" class="result-blurb"></p>
+
+        <div id="error-box" class="error-box" role="alert" hidden></div>
+        <div id="output" class="output" aria-live="polite">
+          Your result will appear here — watch the badge: it tells you whether
+          Gemini Nano on this device or a cloud Gemini model did the work.
+        </div>
+      </section>
+
+      <section class="card history-card" aria-labelledby="history-heading">
+        <div class="output-header">
+          <h2 id="history-heading">Session history</h2>
+          <button id="clear-history-btn" class="ghost-btn" type="button">Clear</button>
+        </div>
+        <p id="stats-line" class="stats-line">No runs yet this session.</p>
+        <ul id="history-list" class="history-list"></ul>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>
+        Built with <strong>Firebase AI Logic</strong> hybrid inference
+        (<code>InferenceMode.PREFER_ON_DEVICE</code>): prompts run on-device with
+        Gemini Nano via Chrome's Prompt API when available, and fall back to a cloud
+        Gemini model otherwise. The badge on every answer comes from the response's
+        <code>inferenceSource</code> — no guessing.
+      </p>
+    </footer>
+
+  </body>
+</html>
